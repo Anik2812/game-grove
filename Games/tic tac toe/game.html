@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    
+    <style>
+        :root {
+            --primary-color: #1e2a3a;
+            --secondary-color: #2c3e50;
+            --background-color: #1e2a3a;;
+            --text-color: #ffffff;
+            --cell-size: min(20vw, 100px);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--background-color) 0%, #2a5298 100%);
+            color: var(--text-color);
+            padding: 20px;
+             
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            max-width: 90%;
+            width: 500px;
+            overflow-y: auto;
+            max-height: 90vh;
+        }
+
+        h1 {
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .cell {
+            aspect-ratio: 1;
+            width: var(--cell-size);
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: clamp(2rem, 8vw, 3rem);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .cell:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .cell.x::before {
+            content: 'X';
+            color: #7eb6ff;
+        }
+
+        .cell.o::before {
+            content: 'O';
+            color: var(--primary-color);
+        }
+
+        #status {
+            font-size: clamp(1rem, 4vw, 1.5rem);
+            margin-bottom: 20px;
+            text-align: center;
+            height: 30px;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            border: none;
+            padding: 10px 20px;
+            font-size: clamp(0.8rem, 3vw, 1rem);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 10px auto;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            background-color: #45b7aa;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 300px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: modalOpen 0.5s;
+        }
+
+        @keyframes modalOpen {
+            from {opacity: 0; transform: scale(0.8);}
+            to {opacity: 1; transform: scale(1);}
+        }
+
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: none;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+            font-size: clamp(0.8rem, 3vw, 1rem);
+        }
+
+        .game-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+
+        .player-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .player-card {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            flex: 1;
+            margin: 0 5px;
+        }
+
+        .player-card.active {
+            box-shadow: 0 0 15px var(--primary-color);
+        }
+
+        .player-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: clamp(0.8rem, 3vw, 1rem);
+        }
+
+        .player-score {
+            font-size: clamp(1rem, 4vw, 1.2rem);
+        }
+
+        #game-mode {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: clamp(0.8rem, 3vw, 1rem);
+        }
+
+        @media (max-width: 400px) {
+            .container {
+                padding: 15px;
+            }
+
+            .cell {
+                width: calc(var(--cell-size) * 0.8);
+            }
+
+            .player-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+
+  
+    
+</head>
+<body>
+    <div class="container">
+        <h1 style="color: #ff7e5f;">Tic Tac Toe</h1>
+        <div id="setup-screen">
+            <input type="text" id="player1-name" placeholder="Enter Player 1 Name">
+            <input type="text" id="player2-name" placeholder="Enter Player 2 Name (or leave blank for AI)">
+            <div class="game-options">
+                <button id="solo-button">Play Solo</button>
+                <button id="multiplayer-button">Play Multiplayer</button>
+            </div>
+        </div>
+        <div id="game-screen" class="hidden">
+            <div id="game-mode"></div>
+            <div class="player-info">
+                <div class="player-card" id="player1-card">
+                    <div class="player-name" id="player1-display"></div>
+                    <div class="player-score" id="player1-score">0</div>
+                </div>
+                <div class="player-card" id="player2-card">
+                    <div class="player-name" id="player2-display"></div>
+                    <div class="player-score" id="player2-score">0</div>
+                </div>
+            </div>
+            <div id="status"></div>
+            <div class="board" id="board"></div>
+            <button id="reset-button">New Game</button>
+            <button id="change-mode-button">Change Mode</button>
+        </div>
+    </div>
+
+    <div id="winnerModal" class="modal">
+        <div class="modal-content">
+            <h2 id="winnerMessage"></h2>
+            <button id="play-again">Play Again</button>
+        </div>
+    </div>
+
+    <canvas id="confetti-canvas"></canvas>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script>
+        const setupScreen = document.getElementById('setup-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const player1Input = document.getElementById('player1-name');
+        const player2Input = document.getElementById('player2-name');
+        const soloButton = document.getElementById('solo-button');
+        const multiplayerButton = document.getElementById('multiplayer-button');
+        const board = document.getElementById('board');
+        const status = document.getElementById('status');
+        const resetButton = document.getElementById('reset-button');
+        const changeModeButton = document.getElementById('change-mode-button');
+        const modal = document.getElementById('winnerModal');
+        const winnerMessage = document.getElementById('winnerMessage');
+        const playAgainButton = document.getElementById('play-again');
+        const gameModeDisplay = document.getElementById('game-mode');
+        const player1Card = document.getElementById('player1-card');
+        const player2Card = document.getElementById('player2-card');
+        const player1Display = document.getElementById('player1-display');
+        const player2Display = document.getElementById('player2-display');
+        const player1ScoreDisplay = document.getElementById('player1-score');
+        const player2ScoreDisplay = document.getElementById('player2-score');
+
+        let player1Name = '';
+        let player2Name = '';
+        let player1Score = 0;
+        let player2Score = 0;
+        let isSoloMode = false;
+        let currentPlayer = 'X';
+        let gameState = ['', '', '', '', '', '', '', '', ''];
+        let gameActive = true;
+
+        const winningConditions = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6]
+        ];
+
+        soloButton.addEventListener('click', () => startGame(true));
+        multiplayerButton.addEventListener('click', () => startGame(false));
+        changeModeButton.addEventListener('click', () => {
+            gameScreen.classList.add('hidden');
+            setupScreen.classList.remove('hidden');
+        });
+
+        function startGame(solo) {
+            player1Name = player1Input.value || 'Player 1';
+            player2Name = solo ? 'AI' : (player2Input.value || 'Player 2');
+            isSoloMode = solo;
+
+            setupScreen.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+            gameScreen.classList.add('fade-in');
+
+            player1Display.textContent = player1Name;
+            player2Display.textContent = player2Name;
+            gameModeDisplay.textContent = solo ? 'Solo Mode' : 'Multiplayer Mode';
+
+            createBoard();
+            updateStatus();
+            updateScores();
+        }
+
+        function createBoard() {
+            board.innerHTML = '';
+            for (let i = 0; i < 9; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.setAttribute('data-cell-index', i);
+                cell.addEventListener('click', handleCellClick);
+                board.appendChild(cell);
+            }
+        }
+
+        function handleCellClick(clickedCellEvent) {
+            const clickedCell = clickedCellEvent.target;
+            const clickedCellIndex = parseInt(clickedCell.getAttribute('data-cell-index'));
+
+            if (gameState[clickedCellIndex] !== '' || !gameActive) return;
+
+            gameState[clickedCellIndex] = currentPlayer;
+            clickedCell.classList.add(currentPlayer.toLowerCase());
+            clickedCell.style.transform = 'rotateY(360deg)';
+            setTimeout(() => {
+                clickedCell.style.transform = '';
+            }, 300);
+
+            checkForWin();
+            checkForDraw();
+
+            if (gameActive) {
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                updateStatus();
+                updatePlayerCards();
+
+                if (isSoloMode && currentPlayer === 'O') {
+                    setTimeout(computerMove, 500);
+                }
+            }
+        }
+
+        function computerMove() {
+            let availableMoves = gameState.reduce((acc, cell, index) => {
+                if (cell === '') acc.push(index);
+                return acc;
+            }, []);
+
+            if (availableMoves.length > 0) {
+                let randomIndex = Math.floor(Math.random() * availableMoves.length);
+                let computerChoice = availableMoves[randomIndex];
+                gameState[computerChoice] = 'O';
+                let cell = document.querySelector(`[data-cell-index="${computerChoice}"]`);
+                cell.classList.add('o');
+                cell.style.transform = 'rotateY(360deg)';
+                setTimeout(() => {
+                    cell.style.transform = '';
+                }, 300);
+
+                checkForWin();
+                checkForDraw();
+
+                if (gameActive) {
+                    currentPlayer = 'X';
+                    updateStatus();
+                    updatePlayerCards();
+                }
+            }
+        }
+
+        function checkForWin() {
+            for (let i = 0; i < winningConditions.length; i++) {
+                const [a, b, c] = winningConditions[i];
+                if (gameState[a] && gameState[a] === gameState[b] && gameState[a] === gameState[c]) {
+                    gameActive = false;
+                    announceWinner(gameState[a]);
+                    highlightWinnerCells(a, b, c);
+                    updateScores(gameState[a]);
+                    return;
+                }
+            }
+        }
+
+        function checkForDraw() {
+            if (!gameState.includes('') && gameActive) {
+                gameActive = false;
+                announceWinner('draw');
+            }
+        }
+
+        function announceWinner(winner) {
+            if (winner === 'draw') {
+                winnerMessage.textContent = "It's a draw!";
+            } else {
+                let winnerName = winner === 'X' ? player1Name : player2Name;
+                winnerMessage.textContent = `${winnerName} wins!`;
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            }
+            modal.style.display = 'block';
+        }
+
+        function highlightWinnerCells(a, b, c) {
+            const cells = document.querySelectorAll('.cell');
+            [a, b, c].forEach(index => {
+                cells[index].style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
+                cells[index].style.transform = 'scale(1.1)';
+            });
+        }
+
+        function updateStatus() {
+            let playerName = currentPlayer === 'X' ? player1Name : player2Name;
+            status.textContent = `${playerName}'s turn`;
+        }
+
+        function updatePlayerCards() {
+            player1Card.classList.toggle('active', currentPlayer === 'X');
+            player2Card.classList.toggle('active', currentPlayer === 'O');
+        }
+
+        function updateScores(winner) {
+            if (winner === 'X') {
+                player1Score++;
+            } else if (winner === 'O') {
+                player2Score++;
+            }
+            player1ScoreDisplay.textContent = player1Score;
+            player2ScoreDisplay.textContent = player2Score;
+        }
+
+        function resetGame() {
+            gameState = ['', '', '', '', '', '', '', '', ''];
+            gameActive = true;
+            currentPlayer = 'X';
+            updateStatus();
+            updatePlayerCards();
+            document.querySelectorAll('.cell').forEach(cell => {
+                cell.className = 'cell';
+                cell.style.backgroundColor = '';
+                cell.style.transform = '';
+            });
+            modal.style.display = 'none';
+        }
+
+        resetButton.addEventListener('click', resetGame);
+        playAgainButton.addEventListener('click', () => {
+            modal.style.display = 'none';
+            resetGame();
+        });
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>

@@ -133,9 +133,7 @@ function movePiece(piece, targetPosition) {
                         if (shouldBecomeKing(piece)) {
                             makeKing(piece);
                         }
-                        if (capturedPiece && canJumpAgain(piece)) {
-                            setTimeout(() => computerMove(piece), 1000);
-                        } else {
+                        if (!canJumpAgain(piece)) {
                             switchTurn();
                             if (gameMode === 'solo' && currentTurn === 'black') {
                                 setTimeout(computerMove, 1000);
@@ -229,40 +227,51 @@ function checkForWinner() {
     const whitePieces = pieces.filter(p => p.userData.color === 'white');
     const blackPieces = pieces.filter(p => p.userData.color === 'black');
 
-    if (whitePieces.length === 0) {
-        winnerDisplay.textContent = 'Black Wins!';
-        gameUI.style.display = 'none';
+    if (whitePieces.length === 0 || blackPieces.length === 0) {
+        const winner = whitePieces.length === 0 ? 'Black' : 'White';
+        winnerDisplay.textContent = `${winner} wins!`;
         winnerDisplay.style.display = 'block';
-    } else if (blackPieces.length === 0) {
-        winnerDisplay.textContent = 'White Wins!';
-        gameUI.style.display = 'none';
-        winnerDisplay.style.display = 'block';
+        celebrateWin(winner);
     }
 }
 
-function evaluateMove(fromX, fromZ, toX, toZ) {
-    const capturedPiece = getCapturedPiece(fromX, fromZ, toX, toZ);
-    return capturedPiece ? 10 : 1;
-}
+function celebrateWin(winner) {
+    // Create and animate confetti
+    for (let i = 0; i < 100; i++) {
+        const confetti = new THREE.Mesh(
+            new THREE.BoxGeometry(0.1, 0.1, 0.1),
+            new THREE.MeshBasicMaterial({ color: Math.random() * 0xffffff })
+        );
+        confetti.position.set(
+            Math.random() * 8 - 4,
+            10,
+            Math.random() * 8 - 4
+        );
+        scene.add(confetti);
 
-function getValidMoves(piece) {
-    const x = Math.round(piece.position.x + 3.5);
-    const z = Math.round(piece.position.z + 3.5);
-    const directions = piece.userData.isKing ? [-1, 1] : [piece.userData.color === 'white' ? -1 : 1];
-    const validMoves = [];
-
-    for (const dz of directions) {
-        for (const dx of [-1, 1]) {
-            if (isValidMove(piece.userData.color, x, z, x + dx, z + dz)) {
-                validMoves.push({ fromX: x, fromZ: z, toX: x + dx, toZ: z + dz });
-            }
-            if (isValidMove(piece.userData.color, x, z, x + 2 * dx, z + 2 * dz)) {
-                validMoves.push({ fromX: x, fromZ: z, toX: x + 2 * dx, toZ: z + 2 * dz });
-            }
-        }
+        gsap.to(confetti.position, {
+            y: -5,
+            duration: 2 + Math.random() * 2,
+            ease: "power1.out",
+            onComplete: () => scene.remove(confetti)
+        });
     }
 
-    return validMoves;
+    // Zoom and rotate camera
+    gsap.to(camera.position, {
+        x: 5,
+        y: 15,
+        z: 5,
+        duration: 2,
+        ease: "power2.inOut"
+    });
+    gsap.to(camera.rotation, {
+        x: -Math.PI / 4,
+        y: Math.PI / 4,
+        z: 0,
+        duration: 2,
+        ease: "power2.inOut"
+    });
 }
 
 function computerMove() {
@@ -271,35 +280,110 @@ function computerMove() {
     let bestScore = -Infinity;
 
     for (const piece of blackPieces) {
-        const validMoves = getValidMoves(piece);
-        for (const move of validMoves) {
-            const score = evaluateMove(move.fromX, move.fromZ, move.toX, move.toZ);
-            if (score > bestScore) {
-                bestScore = score;
-                bestMove = { piece, move };
+        const x = Math.round(piece.position.x + 3.5);
+        const z = Math.round(piece.position.z + 3.5);
+
+        for (const dz of [-1, 1]) {
+            for (const dx of [-1, 1]) {
+                if (isValidMove('black', x, z, x + dx, z + dz)) {
+                    const score = evaluateMove(x, z, x + dx, z + dz);
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestMove = { piece, toX: x + dx, toZ: z + dz };
+                    }
+                }
+                if (isValidMove('black', x, z, x + 2 * dx, z + 2 * dz)) {
+                    const score = evaluateMove(x, z, x + 2 * dx, z + 2 * dz);
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestMove = { piece, toX: x + 2 * dx, toZ: z + 2 * dz };
+                    }
+                }
             }
         }
     }
 
     if (bestMove) {
-        movePiece(bestMove.piece, new THREE.Vector3(bestMove.move.toX - 3.5, 0.1, bestMove.move.toZ - 3.5));
+        movePiece(bestMove.piece, new THREE.Vector3(bestMove.toX - 3.5, 0.1, bestMove.toZ - 3.5));
     }
 }
 
-function selectGameMode(mode) {
+function evaluateMove(fromX, fromZ, toX, toZ) {
+    let score = 0;
+
+    // Prefer captures
+    if (Math.abs(toX - fromX) === 2) {
+        score += 10;
+    }
+
+    // Prefer advancing
+    score += toZ;
+
+    // Prefer center control
+    score += 5 - Math.abs(toX - 3.5);
+
+    return score;
+}
+
+function resetGame() {
+    pieces.forEach(piece => scene.remove(piece));
+    pieces.length = 0;
+    setupBoard();
+    currentTurn = 'white';
+    turnIndicator.textContent = "White's Turn";
+    winnerDisplay.style.display = 'none';
+
+    // Reset camera position
+    gsap.to(camera.position, {
+        x: 0,
+        y: 10,
+        z: 10,
+        duration: 1,
+        ease: "power2.inOut"
+    });
+    gsap.to(camera.rotation, {
+        x: -Math.PI / 4,
+        y: 0,
+        z: 0,
+        duration: 1,
+        ease: "power2.inOut"
+    });
+}
+
+function startGame(mode) {
     gameMode = mode;
     gameModeSelector.style.display = 'none';
     gameUI.style.display = 'block';
+    setupBoard();
 }
 
-document.addEventListener('mousemove', onMouseMove);
-document.addEventListener('click', onMouseClick);
+document.getElementById('solo-btn').addEventListener('click', () => startGame('solo'));
+document.getElementById('multiplayer-btn').addEventListener('click', () => startGame('multiplayer'));
+document.getElementById('reset-game').addEventListener('click', resetGame);
 
-setupBoard();
+window.addEventListener('mousemove', onMouseMove);
+window.addEventListener('click', onMouseClick);
+
+// Add floating animation to the board
+function animateBoard() {
+    const time = performance.now() * 0.001;
+    boardMesh.position.y = Math.sin(time) * 0.1;
+    requestAnimationFrame(animateBoard);
+}
+
+animateBoard();
 
 function animate() {
     requestAnimationFrame(animate);
     controls.update();
     renderer.render(scene, camera);
 }
+
 animate();
+
+// Handle window resizing
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});

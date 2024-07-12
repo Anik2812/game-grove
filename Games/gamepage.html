@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Board Game Cafe - Games</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --dark-bg: #1e2a3a;
+            --accent-color: #ff7e5f;
+            --text-color: #e0e0e0;
+            --secondary-color: #7eb6ff;
+            --card-bg: #2c3e50;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--dark-bg);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(255, 126, 95, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(126, 182, 255, 0.1) 0%, transparent 20%);
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            padding: 20px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            background-color: rgba(30, 42, 58, 0.9);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .logo:hover {
+            color: var(--secondary-color);
+        }
+
+        nav ul {
+            display: flex;
+            list-style-type: none;
+        }
+
+        nav ul li {
+            margin-left: 30px;
+        }
+
+        nav ul li a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 300;
+            transition: color 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: var(--accent-color);
+        }
+
+        .games-section {
+            padding-top: 100px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .games-section h2 {
+            font-size: 36px;
+            color: var(--accent-color);
+            margin-bottom: 40px;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease forwards 0.3s;
+        }
+
+        .game-card {
+            background: linear-gradient(135deg, var(--card-bg), #34495e);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.5s ease;
+            cursor: pointer;
+            position: relative;
+            z-index: 1;
+            text-decoration: none;
+            color: var(--text-color);
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            transform: scale(0);
+            transition: transform 0.6s ease-out;
+            z-index: -1;
+        }
+
+        .game-card:hover::before {
+            transform: scale(1);
+        }
+
+        .game-card:hover {
+            transform: translateY(-15px) scale(1.05);
+            box-shadow: 0 30px 40px rgba(0,0,0,0.4);
+        }
+
+        .game-image {
+            height: 250px;
+            background-size: cover;
+            background-position: center;
+            transition: transform 0.5s ease;
+        }
+
+        .game-card:hover .game-image {
+            transform: scale(1.1);
+        }
+
+        .game-info {
+            padding: 20px;
+            transform: translateY(0);
+            transition: transform 0.5s ease;
+        }
+
+        .game-card:hover .game-info {
+            transform: translateY(-10px);
+        }
+
+        .game-info h3 {
+            color: var(--accent-color);
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .game-info p {
+            color: var(--text-color);
+            font-size: 16px;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .game-card {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @media (max-width: 768px) {
+            .game-grid {
+                grid-template-columns: 1fr;
+            }
+            nav ul {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <a href="../index.html" class="logo">GameGrove</a>
+            <nav id="mainNav">
+                <ul>
+                    <li><a href="./gamepage.html">Games</a></li>
+                    <li><a href="./Events/events.html">Events</a></li>
+                    <li><a href="./Menu/Menu.html">Menu</a></li>
+                </ul>
+            </nav>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <section id="games" class="games-section">
+        <div class="container">
+            <h2>Our Games Collection</h2>
+            <div class="game-grid">
+                <a href="./tic tac toe/game.html" class="game-card">
+                    <div class="game-image" style="background-image: url('https://plus.unsplash.com/premium_photo-1673735396428-d51dc2a7a62d?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');"></div>
+                    <div class="game-info">
+                        <h3>Tic Tac Toe</h3>
+                        <p>Classic strategy game for two players. Align three symbols to win!</p>
+                    </div>
+                </a>
+                <a href="./checkers/index.html" class="game-card">
+                    <div class="game-image" style="background-image: url('https://images.unsplash.com/photo-1551198581-aec5c1556d7c?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');"></div>
+                    <div class="game-info">
+                        <h3>Checkers</h3>
+                        <p>Traditional board game of strategy and tactics. Jump and capture to victory!</p>
+                    </div>
+                </a>
+                <a href="./crossword/cross.html" class="game-card">
+                    <div class="game-image" style="background-image: url('https://images-ext-1.discordapp.net/external/HrKpN2O4n9nL0BjA3bUGulRgZ2C6tsGnpKXQc_AbRWw/%3Fq%3D80%26w%3D1470%26auto%3Dformat%26fit%3Dcrop%26ixlib%3Drb-4.0.3%26ixid%3DM3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%253D%253D/https/images.unsplash.com/photo-1528747392453-cfa4ce9e3179?format=webp&width=1051&height=700');"></div>
+                    <div class="game-info">
+                        <h3>Chess</h3>
+                        <p>The ultimate game of strategy and planning. Checkmate your opponent!</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
