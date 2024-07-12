@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive 3D Checkers Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="Board.css">
+</head>
+<body>
+    <div id="game-container"></div>
+    <div id="game-mode-selector">
+        <h1>3D Checkers</h1>
+        <button id="solo-btn">Play Solo</button>
+        <button id="multiplayer-btn">Play Multiplayer</button>
+    </div>
+    <div id="game-ui">
+        <div id="turn-indicator">White's Turn</div>
+        <div id="score-display">
+            <div>White: <span id="white-score">0</span></div>
+            <div>Black: <span id="black-score">0</span></div>
+        </div>
+        <button id="reset-game">New Game</button>
+    </div>
+    <div id="winner-display"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.7.1/gsap.min.js"></script>
+    <script src="Board.js"></script>
+</body>
+</html>
