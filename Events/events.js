@@ -53,6 +53,7 @@ function renderCalendar() {
 }
 
 function showEventModal(date) {
+    const eventModal = document.getElementById('eventModal');
     const eventDetails = document.getElementById('eventDetails');
     const eventsOnDate = events.filter(event => event.date === date);
 
@@ -66,7 +67,7 @@ function showEventModal(date) {
             <p class="event-info"><strong>Location:</strong> ${event.location}</p>
             <p class="event-description">${event.description}</p>
         `;
-        document.getElementById('eventModal').style.display = 'block';
+        eventModal.style.display = 'block';
     } else {
         alert('No events on this date');
     }
@@ -90,4 +91,10 @@ window.onclick = function(event) {
     }
 }
 
+// Initialize calendar when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', renderCalendar);
+
+// Add event listener for the close button
+document.querySelector('.close').addEventListener('click', () => {
+    document.getElementById('eventModal').style.display = 'none';
+});
