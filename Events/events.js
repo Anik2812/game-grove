@@ -1,8 +1,8 @@
 let currentDate = new Date();
 let events = [
-    { date: '2024-07-15', title: 'Board Game Tournament', time: '19:00', location: 'Main Hall', description: 'Join us for an exciting board game tournament!', image: 'https://example.com/board-game-tournament.jpg' },
-    { date: '2024-07-20', title: 'Boba Tea Tasting Night', time: '18:00', location: 'Cafe Area', description: 'Try our new boba tea flavors while playing your favorite games.', image: 'https://example.com/boba-tea-night.jpg' },
-    { date: '2024-07-25', title: 'Strategy Game Workshop', time: '17:00', location: 'Workshop Room', description: 'Learn advanced strategies for popular board games.', image: 'https://example.com/strategy-workshop.jpg' }
+    { date: '2024-07-15', title: 'Board Game Tournament', time: '19:00', location: 'Main Hall', description: 'Join us for an exciting board game tournament!', image: 'https://plus.unsplash.com/premium_vector-1682300723506-a8b852aeb1a1?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1pbi1zYW1lLXNlcmllc3wyfHx8ZW58MHx8fHx8' },
+    { date: '2024-07-20', title: 'Boba Tea Tasting Night', time: '18:00', location: 'Cafe Area', description: 'Try our new boba tea flavors while playing your favorite games.', image: 'https://images.unsplash.com/photo-1498804103079-a6351b050096?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
+    { date: '2024-07-25', title: 'Strategy Game Workshop', time: '17:00', location: 'Workshop Room', description: 'Learn advanced strategies for popular board games.', image: 'https://images.unsplash.com/photo-1604948501466-4e9c339b9c24?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8c3RyYXRlZ3klMjBnYW1lfGVufDB8fDB8fHww' }
 ];
 
 function renderCalendar() {
@@ -61,7 +61,7 @@ function showEventModal(date) {
         eventDetails.innerHTML = `
             <img src="${event.image}" alt="${event.title}" class="event-image">
             <h2 class="event-title">${event.title}</h2>
-            <p class="event-info"><strong>Date:</strong> ${event.date}</p>
+            <p class="event-info"><strong>Date:</strong> ${new Date(event.date).toLocaleDateString()}</p>
             <p class="event-info"><strong>Time:</strong> ${event.time}</p>
             <p class="event-info"><strong>Location:</strong> ${event.location}</p>
             <p class="event-description">${event.description}</p>
@@ -82,9 +82,11 @@ document.getElementById('nextMonth').addEventListener('click', () => {
     renderCalendar();
 });
 
+// Close modal when clicking outside or on the close button
 window.onclick = function(event) {
-    if (event.target.className === 'modal' || event.target.className === 'close') {
-        document.getElementById('eventModal').style.display = 'none';
+    const modal = document.getElementById('eventModal');
+    if (event.target === modal || event.target.className === 'close') {
+        modal.style.display = 'none';
     }
 }
 

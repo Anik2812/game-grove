@@ -180,26 +180,28 @@
             margin: 0 auto 20px;
         }
     </style>
+    <link rel="stylesheet" href="../styles.css">
 </head>
 
-<body><header>
-    <div class="container header-content">
-        <a href="index.html" class="logo">GameGrove</a>
-        <nav id="mainNav">
-            <ul>
-                <li><a href="./Games/gamepage.html">Games</a></li>
-                <li><a href="./Events/events.html">Events</a></li>
-                <li><a href="./Menu.html">Menu</a></li>
-            </ul>
-        </nav>
-        <div class="hamburger">
-            <span></span>
-            <span></span>
-            <span></span>
+<body>
+    <header>
+        <div class="container header-content">
+            <a href="../index.html" class="logo">GameGrove</a>
+            <nav id="mainNav">
+                <ul>
+                    <li><a href="../Games/gamepage.html">Games</a></li>
+                    <li><a href="../Events/events.html">Events</a></li>
+                    <li><a href="./Menu.html">Menu</a></li>
+                </ul>
+            </nav>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
         </div>
-    </div>
-</header>
-    <h1>Menu</h1><br
+    </header>
+    <h1>Menu</h1>
     <div class="menu-grid" id="menuGrid"></div>
 
     <div class="popup" id="popup">
@@ -235,7 +237,7 @@
                 const menuItem = document.createElement('div');
                 menuItem.className = 'menu-item';
                 menuItem.innerHTML = `
-                    <div class="model-container" id="${item.model.split('.')[0]}"></div>
+                    <div class="model-container" id="${item.model.split('.')[0]}">Loading ${item.name}...</div>
                     <h3>${item.name}</h3>
                     <p>${item.description}</p>
                     <div class="price">${item.price}</div>
@@ -247,102 +249,109 @@
         }
 
         function loadModel(item, containerId, isPopup = false) {
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(isPopup ? 200 : 300, 200);
-    const container = document.getElementById(containerId);
-    container.appendChild(renderer.domElement);
+            console.log(`Attempting to load model: ${item.model}`);
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(isPopup ? 200 : 300, 200);
+            const container = document.getElementById(containerId);
+            container.innerHTML = ''; // Clear any existing content
+            container.appendChild(renderer.domElement);
 
-    // Add OrbitControls
-    const controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.25;
-    controls.enableZoom = false;
+            const controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.25;
+            controls.enableZoom = false;
 
-    const loader = new THREE.GLTFLoader();
-    loader.load(item.model, (gltf) => {
-        const model = gltf.scene;
-        scene.add(model);
+            const loader = new THREE.GLTFLoader();
+            loader.load(
+                item.model,
+                (gltf) => {
+                    console.log(`Model loaded successfully: ${item.model}`);
+                    const model = gltf.scene;
+                    scene.add(model);
 
-        const box = new THREE.Box3().setFromObject(model);
-        const center = box.getCenter(new THREE.Vector3());
-        const size = box.getSize(new THREE.Vector3());
+                    const box = new THREE.Box3().setFromObject(model);
+                    const center = box.getCenter(new THREE.Vector3());
+                    const size = box.getSize(new THREE.Vector3());
 
-        const maxDim = Math.max(size.x, size.y, size.z);
-        const fov = camera.fov * (Math.PI / 180);
-        let cameraZ = Math.abs(maxDim / 2 / Math.tan(fov / 2));
-        camera.position.z = cameraZ * 1.5;
+                    const maxDim = Math.max(size.x, size.y, size.z);
+                    const fov = camera.fov * (Math.PI / 180);
+                    let cameraZ = Math.abs(maxDim / 2 / Math.tan(fov / 2));
+                    camera.position.z = cameraZ * 1.5;
 
-        // Center the model and apply custom Y offset if specified
-        model.position.set(-center.x, -center.y + (item.yOffset || 0), -center.z);
+                    model.position.set(-center.x, -center.y + (item.yOffset || 0), -center.z);
 
-        // Improved lighting
-        const ambientLight = new THREE.AmbientLight(0xffffff, 1);
-        scene.add(ambientLight);
+                    const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+                    scene.add(ambientLight);
 
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-        directionalLight.position.set(1, 1, 1).normalize();
-        scene.add(directionalLight);
+                    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+                    directionalLight.position.set(1, 1, 1).normalize();
+                    scene.add(directionalLight);
 
-        const pointLight = new THREE.PointLight(0xffffff, 1);
-        pointLight.position.set(0, 5, 0);
-        scene.add(pointLight);
+                    const pointLight = new THREE.PointLight(0xffffff, 1);
+                    pointLight.position.set(0, 5, 0);
+                    scene.add(pointLight);
 
-        let autoRotate = true;
-        let lastInteractionTime = 0;
+                    let autoRotate = true;
+                    let lastInteractionTime = 0;
 
-        function animate() {
-            requestAnimationFrame(animate);
+                    function animate() {
+                        requestAnimationFrame(animate);
 
-            const currentTime = Date.now();
-            if (currentTime - lastInteractionTime > 3000) { // Resume auto-rotation after 3 seconds of inactivity
-                autoRotate = true;
-            }
+                        const currentTime = Date.now();
+                        if (currentTime - lastInteractionTime > 3000) {
+                            autoRotate = true;
+                        }
 
-            if (autoRotate) {
-                model.rotation.y += 0.005;
-            }
+                        if (autoRotate) {
+                            model.rotation.y += 0.005;
+                        }
 
-            controls.update();
-            renderer.render(scene, camera);
+                        controls.update();
+                        renderer.render(scene, camera);
+                    }
+                    animate();
+
+                    container.addEventListener('mousedown', () => {
+                        autoRotate = false;
+                        lastInteractionTime = Date.now();
+                    });
+
+                    container.addEventListener('mousemove', () => {
+                        if (!autoRotate) {
+                            lastInteractionTime = Date.now();
+                        }
+                    });
+
+                    container.addEventListener('mouseup', () => {
+                        lastInteractionTime = Date.now();
+                    });
+
+                    container.addEventListener('touchstart', () => {
+                        autoRotate = false;
+                        lastInteractionTime = Date.now();
+                    });
+
+                    container.addEventListener('touchmove', () => {
+                        if (!autoRotate) {
+                            lastInteractionTime = Date.now();
+                        }
+                    });
+
+                    container.addEventListener('touchend', () => {
+                        lastInteractionTime = Date.now();
+                    });
+                },
+                (progress) => {
+                    console.log((progress.loaded / progress.total * 100) + '% loaded');
+                },
+                (error) => {
+                    console.error('An error happened', error);
+                    container.textContent = `Error loading ${item.name}`;
+                }
+            );
         }
-        animate();
-
-        // Make model draggable and handle interactions
-        container.addEventListener('mousedown', () => {
-            autoRotate = false;
-            lastInteractionTime = Date.now();
-        });
-
-        container.addEventListener('mousemove', () => {
-            if (!autoRotate) {
-                lastInteractionTime = Date.now();
-            }
-        });
-
-        container.addEventListener('mouseup', () => {
-            lastInteractionTime = Date.now();
-        });
-
-        // Handle touch events for mobile devices
-        container.addEventListener('touchstart', () => {
-            autoRotate = false;
-            lastInteractionTime = Date.now();
-        });
-
-        container.addEventListener('touchmove', () => {
-            if (!autoRotate) {
-                lastInteractionTime = Date.now();
-            }
-        });
-
-        container.addEventListener('touchend', () => {
-            lastInteractionTime = Date.now();
-        });
-    });
-}
-
 
         function showPopup(index) {
             const item = menuItems[index];
@@ -352,11 +361,9 @@
             document.getElementById('popupDescription').textContent = item.description;
             document.getElementById('popupPrice').textContent = item.price;
 
-            // Clear previous model
             const popupModelContainer = document.getElementById('popupModel');
             popupModelContainer.innerHTML = '';
 
-            // Load new model
             loadModel(item, 'popupModel', true);
         }
 
