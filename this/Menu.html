@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GameGrove 3D Menu</title>
+    <title>Menu</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
 
@@ -18,22 +19,14 @@
         body {
             margin: 0;
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #1a1c20 0%, #2b2e33 100%);
+            background: linear-gradient(135deg, #1e2a3a 0%, #2c3e50 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             color: var(--text-color);
-        }
-
-        .menu-container {
-            max-width: 1200px;
-            width: 90%;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            perspective: 1000px;
+            overflow-x: hidden;
         }
 
         h1 {
@@ -41,13 +34,22 @@
             color: var(--accent-color);
             margin-bottom: 30px;
             font-size: 3em;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            transform: translateZ(50px);
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
         }
 
         .menu-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 30px;
+            transform-style: preserve-3d;
+            padding: 100px 40px 40px;
+            max-width: 1400px;
+            width: 90%;
         }
 
         .menu-item {
@@ -58,11 +60,16 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            transform-style: preserve-3d;
+            transform: translateZ(20px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            cursor: pointer;
         }
 
         .menu-item:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+            transform: translateY(-10px) translateZ(30px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
         }
 
         .model-container {
@@ -70,17 +77,18 @@
             height: 200px;
             margin-bottom: 15px;
             position: relative;
-            cursor: pointer;
         }
 
         .menu-item h3 {
             color: var(--secondary-color);
             margin-bottom: 10px;
+            transform: translateZ(10px);
         }
 
         .menu-item p {
             font-size: 0.9em;
             margin-bottom: 20px;
+            transform: translateZ(5px);
         }
 
         .price {
@@ -92,6 +100,7 @@
             padding: 5px 10px;
             border-radius: 20px;
             font-weight: bold;
+            transform: translateZ(15px);
         }
 
         .buy-btn {
@@ -103,11 +112,12 @@
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
+            transform: translateZ(15px);
         }
 
         .buy-btn:hover {
             background: var(--secondary-color);
-            transform: scale(1.05);
+            transform: scale(1.05) translateZ(20px);
         }
 
         .popup {
@@ -119,56 +129,93 @@
             background: var(--card-bg);
             padding: 30px;
             border-radius: 15px;
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
             z-index: 1000;
             animation: popupAppear 0.5s ease;
-            width: 80%;
-            max-width: 600px;
+            text-align: center;
+            max-width: 80%;
+            width: 400px;
         }
 
-       
+        @keyframes popupAppear {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        .popup h2 {
+            color: var(--accent-color);
+            margin-bottom: 20px;
+        }
+
+        .popup p {
+            margin-bottom: 20px;
+        }
+
+        .close-popup {
+            background: var(--secondary-color);
+            color: var(--dark-bg);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
 
         .close-popup:hover {
             background: var(--accent-color);
             transform: scale(1.05);
         }
+
+        .popup-model-container {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 20px;
+        }
     </style>
 </head>
+
 <body>
-    <div class="menu-container">
-        <h1>GameGrove 3D Menu</h1>
-        <div class="menu-grid" id="menuGrid"></div>
-    </div>
+    <h1>Menu</h1><br>
+    <div class="menu-grid" id="menuGrid"></div>
 
     <div class="popup" id="popup">
-        <h2 id="popupTitle"></h2>
         <div class="popup-model-container" id="popupModel"></div>
+        <h2 id="popupTitle"></h2>
         <p id="popupDescription"></p>
         <p id="popupPrice"></p>
-        <p>Your order will be on your table in a short time. Enjoy your game!</p>
         <button class="close-popup" onclick="closePopup()">Close</button>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/stats.min.js"></script>
 
     <script>
         const menuItems = [
             { name: "BLT Sandwich", description: "Classic BLT with crispy bacon, fresh lettuce, and juicy tomatoes.", price: "$8.99", model: 'blt_sandwich.glb' },
             { name: "Bubble Tea & Cookies", description: "Refreshing bubble tea served with delightful cookies.", price: "$6.99", model: 'bubble_tea_and_cookies.glb' },
             { name: "Celestial Tea", description: "Soothing blend of herbal tea for a celestial experience.", price: "$4.99", model: 'celestial_tea.glb' },
-            { name: "Artisan Coffee", description: "Rich, aromatic coffee brewed to perfection.", price: "$3.99", model: 'coffee.glb' },
+            { name: "Artisan Coffee", description: "Rich, aromatic coffee brewed to perfection.", price: "$3.99", model: 'coffee.glb', yOffset: -0.5 },
             { name: "Buttery Croissant", description: "Flaky, golden-brown croissant, perfect for breakfast or snack.", price: "$3.99", model: 'croissant__food.glb' },
             { name: "Dessert Platter", description: "Assortment of delightful desserts to satisfy your sweet tooth.", price: "$9.99", model: 'desserts.glb' },
             { name: "Fast Food Combo", description: "Satisfying combo of burger, fries, and drink.", price: "$11.99", model: 'fast-food.glb' },
-            { name: "Fluffy Pancakes", description: "Stack of fluffy pancakes served with syrup and butter.", price: "$7.99", model: 'pancakes.glb' },
-            { name: "Gourmet Pizza", description: "Delicious pizza with a variety of toppings on a crispy crust.", price: "$14.99", model: 'pizza.glb' },
-            { name: "Vegan Delight", description: "Nutritious and delicious vegan meal option.", price: "$12.99", model: 'vegan_food.glb' }
+            { name: "Fluffy Pancakes", description: "Stack of fluffy strawberry cake served with syrup and cream.", price: "$7.99", model: 'strawberry_cake.glb' },
+            { name: "Gourmet Pizza", description: "Delicious pizza with a variety of toppings on a crispy crust.", price: "$14.99", model: 'pizza.glb', yOffset: -0.2 },
+            { name: "Vegan Delight", description: "Nutritious and delicious vegan meal option.", price: "$12.99", model: 'vegan_food.glb', yOffset: -0.06 }
         ];
 
         function renderMenu() {
             const menuGrid = document.getElementById('menuGrid');
-            menuItems.forEach(item => {
+            menuItems.forEach((item, index) => {
                 const menuItem = document.createElement('div');
                 menuItem.className = 'menu-item';
                 menuItem.innerHTML = `
@@ -176,68 +223,125 @@
                     <h3>${item.name}</h3>
                     <p>${item.description}</p>
                     <div class="price">${item.price}</div>
-                    <button class="buy-btn" onclick="showPopup('${item.name}', '${item.description}', '${item.price}', '${item.model}')">Buy</button>
+                    <button class="buy-btn" onclick="showPopup(${index})">Buy</button>
                 `;
                 menuGrid.appendChild(menuItem);
-                loadModel(item.model, item.model.split('.')[0], item.name === "Fluffy Pancakes");
+                loadModel(item, item.model.split('.')[0]);
             });
         }
 
-        function loadModel(modelFile, containerId, isZoomed = false) {
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setSize(300, 200);
-            const container = document.getElementById(containerId);
-            container.appendChild(renderer.domElement);
+        function loadModel(item, containerId, isPopup = false) {
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(isPopup ? 200 : 300, 200);
+    const container = document.getElementById(containerId);
+    container.appendChild(renderer.domElement);
 
-            
+    // Add OrbitControls
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.25;
+    controls.enableZoom = false;
 
-                container.addEventListener('mousedown', (e) => {
-                    isDragging = true;
-                });
+    const loader = new THREE.GLTFLoader();
+    loader.load(item.model, (gltf) => {
+        const model = gltf.scene;
+        scene.add(model);
 
-                container.addEventListener('mousemove', (e) => {
-                    const deltaMove = {
-                        x: e.offsetX - previousMousePosition.x,
-                        y: e.offsetY - previousMousePosition.y
-                    };
+        const box = new THREE.Box3().setFromObject(model);
+        const center = box.getCenter(new THREE.Vector3());
+        const size = box.getSize(new THREE.Vector3());
 
-                    
+        const maxDim = Math.max(size.x, size.y, size.z);
+        const fov = camera.fov * (Math.PI / 180);
+        let cameraZ = Math.abs(maxDim / 2 / Math.tan(fov / 2));
+        camera.position.z = cameraZ * 1.5;
 
-                    previousMousePosition = {
-                        x: e.offsetX,
-                        y: e.offsetY
-                    };
-                });
+        // Center the model and apply custom Y offset if specified
+        model.position.set(-center.x, -center.y + (item.yOffset || 0), -center.z);
 
-                container.addEventListener('mouseup', (e) => {
-                    isDragging = false;
-                });
+        // Improved lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+        scene.add(ambientLight);
 
-                function animate() {
-                    requestAnimationFrame(animate);
-                    renderer.render(scene, camera);
-                }
-                animate();
-            });
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position.set(1, 1, 1).normalize();
+        scene.add(directionalLight);
+
+        const pointLight = new THREE.PointLight(0xffffff, 1);
+        pointLight.position.set(0, 5, 0);
+        scene.add(pointLight);
+
+        let autoRotate = true;
+        let lastInteractionTime = 0;
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const currentTime = Date.now();
+            if (currentTime - lastInteractionTime > 3000) { // Resume auto-rotation after 3 seconds of inactivity
+                autoRotate = true;
+            }
+
+            if (autoRotate) {
+                model.rotation.y += 0.005;
+            }
+
+            controls.update();
+            renderer.render(scene, camera);
         }
+        animate();
 
-        function toRadians(angle) {
-            return angle * (Math.PI / 180);
-        }
+        // Make model draggable and handle interactions
+        container.addEventListener('mousedown', () => {
+            autoRotate = false;
+            lastInteractionTime = Date.now();
+        });
 
-        function showPopup(name, description, price, model) {
+        container.addEventListener('mousemove', () => {
+            if (!autoRotate) {
+                lastInteractionTime = Date.now();
+            }
+        });
+
+        container.addEventListener('mouseup', () => {
+            lastInteractionTime = Date.now();
+        });
+
+        // Handle touch events for mobile devices
+        container.addEventListener('touchstart', () => {
+            autoRotate = false;
+            lastInteractionTime = Date.now();
+        });
+
+        container.addEventListener('touchmove', () => {
+            if (!autoRotate) {
+                lastInteractionTime = Date.now();
+            }
+        });
+
+        container.addEventListener('touchend', () => {
+            lastInteractionTime = Date.now();
+        });
+    });
+}
+
+
+        function showPopup(index) {
+            const item = menuItems[index];
             const popup = document.getElementById('popup');
-            document.getElementById('popupTitle').textContent = name;
-            document.getElementById('popupDescription').textContent = description;
-            document.getElementById('popupPrice').textContent = price;
             popup.style.display = 'block';
+            document.getElementById('popupTitle').textContent = item.name;
+            document.getElementById('popupDescription').textContent = item.description;
+            document.getElementById('popupPrice').textContent = item.price;
 
-            // Load the 3D model in the popup
+            // Clear previous model
             const popupModelContainer = document.getElementById('popupModel');
             popupModelContainer.innerHTML = '';
-            loadModel(model, 'popupModel');
+
+            // Load new model
+            loadModel(item, 'popupModel', true);
         }
 
         function closePopup() {
@@ -247,4 +351,5 @@
         window.onload = renderMenu;
     </script>
 </body>
+
 </html>
