@@ -3,227 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Café 3D Menu</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        #menu {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            padding: 40px;
-            max-width: 1000px;
-            width: 90%;
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-        }
-        .sections {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-        }
-        .section {
-            width: 45%;
-            min-width: 300px;
-        }
-        h2 {
-            text-align: center;
-            color: #555;
-            border-bottom: 2px solid #ddd;
-            padding-bottom: 10px;
-        }
-        .model-container {
-            width: 100%;
-            height: 250px;
-            margin-bottom: 30px;
-            position: relative;
-            overflow: hidden;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-        }
-        .model-container:hover {
-            transform: scale(1.05);
-        }
-        .model-info {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            padding: 10px;
-            transform: translateY(100%);
-            transition: transform 0.3s ease;
-        }
-        .model-container:hover .model-info {
-            transform: translateY(0);
-        }
-        .model-name {
-            margin: 0;
-            font-size: 1.2em;
-        }
-        .model-description {
-            margin: 5px 0 0;
-            font-size: 0.9em;
-        }
-    </style>
+    <title>GameGrove - Board Game Cafe</title>
+    <meta name="description" content="Experience the perfect blend of board games and delicious treats at GameGrove, your ultimate board game cafe destination.">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="menu">
-        <h1>Our 3D Menu</h1>
-        <div class="sections">
-            <div class="section">
-                <h2>Drinks</h2>
-                <div class="model-container" id="frappuccino">
-                    <div class="model-info">
-                        <h3 class="model-name">Frappuccino</h3>
-                        <p class="model-description">Icy, creamy, and oh-so-refreshing!</p>
+    <header>
+        <div class="container header-content">
+            <a href="index.html" class="logo">GameGrove</a>
+            <nav id="mainNav" style="display: none;">
+                <ul>
+                    <li><a href="#games">Games</a></li>
+                    <li><a href="events.html">Events</a></li>
+                    <li><a href="#menu">Menu</a></li>
+                    <li><a href="#" id="logoutBtn">Logout</a></li>
+                </ul>
+            </nav>
+            <a href="#" class="login-btn" id="loginBtn"><i class="fas fa-user"></i></a>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <div class="dice-container">
+                    <div class="dice">
+                        <div class="face front">1</div>
+                        <div class="face back">6</div>
+                        <div class="face right">4</div>
+                        <div class="face left">3</div>
+                        <div class="face top">2</div>
+                        <div class="face bottom">5</div>
                     </div>
                 </div>
-                <div class="model-container" id="coffee">
-                    <div class="model-info">
-                        <h3 class="model-name">Coffee</h3>
-                        <p class="model-description">Rich, aromatic, and perfectly brewed.</p>
-                    </div>
-                </div>
-                <div class="model-container" id="soda">
-                    <div class="model-info">
-                        <h3 class="model-name">Soda</h3>
-                        <p class="model-description">Fizzy, sweet, and satisfying.</p>
-                    </div>
-                </div>
-                <div class="model-container" id="smoothie">
-                    <div class="model-info">
-                        <h3 class="model-name">Smoothie</h3>
-                        <p class="model-description">Packed with fruity goodness.</p>
-                    </div>
-                </div>
-                <div class="model-container" id="tea">
-                    <div class="model-info">
-                        <h3 class="model-name">Tea</h3>
-                        <p class="model-description">Soothing, aromatic, and comforting.</p>
-                    </div>
-                </div>
+                <h1><strong>GameGrove</strong> Where Every Roll is a Treat!</h1>
+                <p class="tagline">Board Games • Coffee • Community</p>
             </div>
-            <div class="section">
-                <h2>Eateries</h2>
-                <div class="model-container" id="burger">
-                    <div class="model-info">
-                        <h3 class="model-name">Burger</h3>
-                        <p class="model-description">Juicy, flavorful, and satisfying.</p>
-                    </div>
-                </div>
-                <div class="model-container" id="fries">
-                    <div class="model-info">
-                        <h3 class="model-name">French Fries</h3>
-                        <p class="model-description">Crispy, golden, and irresistible.</p>
-                    </div>
-                </div>
-                <div class="model-container" id="sandwich">
-                    <div class="model-info">
-                        <h3 class="model-name">Sandwich</h3>
-                        <p class="model-description">Fresh, hearty, and delicious.</p>
-                    </div>
-                </div>
-                <div class="model-container" id="salad">
-                    <div class="model-info">
-                        <h3 class="model-name">Salad</h3>
-                        <p class="model-description">Crisp, healthy, and refreshing.</p>
-                    </div>
-                </div>
-                <div class="model-container" id="pizza">
-                    <div class="model-info">
-                        <h3 class="model-name">Pizza</h3>
-                        <p class="model-description">Cheesy, savory, and simply delicious.</p>
-                    </div>
-                </div>
+        </section>
+
+        <section class="floating-cards">
+            <div class="card" data-requires-login>
+                <i class="fas fa-chess card-icon"></i>
+                <h3>Extensive Game Library</h3>
+                <p>Over 500 board games for all skill levels and preferences.</p>
             </div>
+            <div class="card" data-requires-login>
+                <i class="fas fa-coffee card-icon"></i>
+                <h3>Artisanal Cafe</h3>
+                <p>Enjoy our specialty coffees and delicious snacks while you play.</p>
+            </div>
+            <div class="card" data-requires-login>
+                <i class="fas fa-calendar-alt card-icon"></i>
+                <h3>Regular Events</h3>
+                <p>Join our tournaments, themed nights, and workshops.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 GameGrove. All rights reserved.</p>
+    </footer>
+
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Login</h2>
+            <form id="loginForm">
+                <input type="email" placeholder="Email" required>
+                <input type="password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+            <p>Don't have an account? <a href="#">Sign up</a></p>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-    <script>
-        const items = [
-            { id: 'frappuccino', model: 'frappuccino.glb' },
-            { id: 'coffee', model: 'coffee.glb' },
-            { id: 'soda', model: 'soda.glb' },
-            { id: 'smoothie', model: 'Nuttella_Latte.glb' },
-            { id: 'tea', model: 'tea.glb' },
-            { id: 'burger', model: 'burger.glb' },
-            { id: 'fries', model: 'fries.glb' },
-            { id: 'sandwich', model: 'sandwich.glb' },
-            { id: 'salad', model: 'salad.glb' },
-            { id: 'pizza', model: 'pizza.glb' }
-        ];
-
-        items.forEach(item => {
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setSize(250, 250);
-            document.getElementById(item.id).appendChild(renderer.domElement);
-
-            const loader = new THREE.GLTFLoader();
-
-            loader.load(item.model, (gltf) => {
-                const model = gltf.scene;
-                scene.add(model);
-
-                // Adjust model position and scale
-                model.position.set(0, 0, 0);
-                model.scale.set(1, 1, 1);
-
-                // Auto-adjust camera
-                const box = new THREE.Box3().setFromObject(model);
-                const center = box.getCenter(new THREE.Vector3());
-                const size = box.getSize(new THREE.Vector3());
-
-                const maxDim = Math.max(size.x, size.y, size.z);
-                const fov = camera.fov * (Math.PI / 180);
-                let cameraZ = Math.abs(maxDim / 2 / Math.tan(fov / 2));
-
-                camera.position.z = cameraZ * 1.5;
-
-                // Lighting
-                const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-                scene.add(ambientLight);
-
-                const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-                directionalLight.position.set(1, 1, 1).normalize();
-                scene.add(directionalLight);
-
-                // Animation
-                function animate() {
-                    requestAnimationFrame(animate);
-                    model.rotation.y += 0.005;
-                    renderer.render(scene, camera);
-                }
-                animate();
-
-                // Interaction
-                const container = document.getElementById(item.id);
-                container.addEventListener('mousemove', (event) => {
-                    const rect = container.getBoundingClientRect();
-                    const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-                    const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-                    
-                    model.rotation.y = x * Math.PI / 4;
-                    model.rotation.x = y * Math.PI / 4;
-                });
-            });
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
