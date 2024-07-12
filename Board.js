@@ -133,7 +133,9 @@ function movePiece(piece, targetPosition) {
                         if (shouldBecomeKing(piece)) {
                             makeKing(piece);
                         }
-                        if (!canJumpAgain(piece)) {
+                        if (capturedPiece && canJumpAgain(piece)) {
+                            setTimeout(() => computerMove(piece), 1000);
+                        } else {
                             switchTurn();
                             if (gameMode === 'solo' && currentTurn === 'black') {
                                 setTimeout(computerMove, 1000);
@@ -147,3 +149,157 @@ function movePiece(piece, targetPosition) {
     }
 }
 
+function isValidMove(pieceColor, fromX, fromZ, toX, toZ) {
+    const dx = toX - fromX;
+    const dz = toZ - fromZ;
+    const direction = pieceColor === 'white' ? -1 : 1;
+
+    // Regular move
+    if (Math.abs(dx) === 1 && dz === direction) {
+        return !getPieceAt(toX, toZ);
+    }
+
+    // Capture move
+    if (Math.abs(dx) === 2 && dz === 2 * direction) {
+        const capturedPiece = getCapturedPiece(fromX, fromZ, toX, toZ);
+        return capturedPiece && capturedPiece.userData.color !== pieceColor && !getPieceAt(toX, toZ);
+    }
+
+    return false;
+}
+
+function getCapturedPiece(fromX, fromZ, toX, toZ) {
+    const midX = (fromX + toX) / 2;
+    const midZ = (fromZ + toZ) / 2;
+    return getPieceAt(midX, midZ);
+}
+
+function getPieceAt(x, z) {
+    return pieces.find(p => Math.round(p.position.x + 3.5) === x && Math.round(p.position.z + 3.5) === z);
+}
+
+function capturePiece(piece) {
+    gsap.to(piece.position, {
+        y: 2,
+        duration: 0.3,
+        ease: "power2.in",
+        onComplete: () => {
+            scene.remove(piece);
+            pieces.splice(pieces.indexOf(piece), 1);
+        }
+    });
+}
+
+function shouldBecomeKing(piece) {
+    const z = Math.round(piece.position.z + 3.5);
+    return (piece.userData.color === 'white' && z === 0) || (piece.userData.color === 'black' && z === 7);
+}
+
+function makeKing(piece) {
+    piece.userData.isKing = true;
+    const crown = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.2, 0.2, 0.1, 32),
+        new THREE.MeshPhongMaterial({ color: 0xFFD700 })
+    );
+    crown.position.y = 0.15;
+    piece.add(crown);
+}
+
+function canJumpAgain(piece) {
+    const x = Math.round(piece.position.x + 3.5);
+    const z = Math.round(piece.position.z + 3.5);
+    const directions = piece.userData.isKing ? [-1, 1] : [piece.userData.color === 'white' ? -1 : 1];
+
+    for (const dz of directions) {
+        for (const dx of [-1, 1]) {
+            if (isValidMove(piece.userData.color, x, z, x + 2 * dx, z + 2 * dz)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+function switchTurn() {
+    currentTurn = currentTurn === 'white' ? 'black' : 'white';
+    turnIndicator.textContent = `${currentTurn.charAt(0).toUpperCase() + currentTurn.slice(1)}'s Turn`;
+}
+
+function checkForWinner() {
+    const whitePieces = pieces.filter(p => p.userData.color === 'white');
+    const blackPieces = pieces.filter(p => p.userData.color === 'black');
+
+    if (whitePieces.length === 0) {
+        winnerDisplay.textContent = 'Black Wins!';
+        gameUI.style.display = 'none';
+        winnerDisplay.style.display = 'block';
+    } else if (blackPieces.length === 0) {
+        winnerDisplay.textContent = 'White Wins!';
+        gameUI.style.display = 'none';
+        winnerDisplay.style.display = 'block';
+    }
+}
+
+function evaluateMove(fromX, fromZ, toX, toZ) {
+    const capturedPiece = getCapturedPiece(fromX, fromZ, toX, toZ);
+    return capturedPiece ? 10 : 1;
+}
+
+function getValidMoves(piece) {
+    const x = Math.round(piece.position.x + 3.5);
+    const z = Math.round(piece.position.z + 3.5);
+    const directions = piece.userData.isKing ? [-1, 1] : [piece.userData.color === 'white' ? -1 : 1];
+    const validMoves = [];
+
+    for (const dz of directions) {
+        for (const dx of [-1, 1]) {
+            if (isValidMove(piece.userData.color, x, z, x + dx, z + dz)) {
+                validMoves.push({ fromX: x, fromZ: z, toX: x + dx, toZ: z + dz });
+            }
+            if (isValidMove(piece.userData.color, x, z, x + 2 * dx, z + 2 * dz)) {
+                validMoves.push({ fromX: x, fromZ: z, toX: x + 2 * dx, toZ: z + 2 * dz });
+            }
+        }
+    }
+
+    return validMoves;
+}
+
+function computerMove() {
+    const blackPieces = pieces.filter(p => p.userData.color === 'black');
+    let bestMove = null;
+    let bestScore = -Infinity;
+
+    for (const piece of blackPieces) {
+        const validMoves = getValidMoves(piece);
+        for (const move of validMoves) {
+            const score = evaluateMove(move.fromX, move.fromZ, move.toX, move.toZ);
+            if (score > bestScore) {
+                bestScore = score;
+                bestMove = { piece, move };
+            }
+        }
+    }
+
+    if (bestMove) {
+        movePiece(bestMove.piece, new THREE.Vector3(bestMove.move.toX - 3.5, 0.1, bestMove.move.toZ - 3.5));
+    }
+}
+
+function selectGameMode(mode) {
+    gameMode = mode;
+    gameModeSelector.style.display = 'none';
+    gameUI.style.display = 'block';
+}
+
+document.addEventListener('mousemove', onMouseMove);
+document.addEventListener('click', onMouseClick);
+
+setupBoard();
+
+function animate() {
+    requestAnimationFrame(animate);
+    controls.update();
+    renderer.render(scene, camera);
+}
+animate();
