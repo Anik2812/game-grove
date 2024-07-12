@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Café 3D Menu</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        #menu {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px;
+        }
+        .section {
+            width: 45%;
+        }
+        h2 {
+            text-align: center;
+        }
+        .model-container {
+            width: 100%;
+            height: 200px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="menu">
+        <div class="section">
+            <h2>Drinks</h2>
+            <div class="model-container" id="frappuccino"></div>
+            <div class="model-container" id="coffee"></div>
+            <div class="model-container" id="soda"></div>
+            <div class="model-container" id="smoothie"></div>
+            <div class="model-container" id="tea"></div>
+        </div>
+        <div class="section">
+            <h2>Eateries</h2>
+            <div class="model-container" id="burger"></div>
+            <div class="model-container" id="fries"></div>
+            <div class="model-container" id="sandwich"></div>
+            <div class="model-container" id="salad"></div>
+            <div class="model-container" id="pizza"></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script>
+        const items = [
+            { id: 'frappuccino', model: 'path/to/frappuccino.glb' },
+            { id: 'coffee', model: 'path/to/coffee.glb' },
+            { id: 'soda', model: 'path/to/soda.glb' },
+            { id: 'smoothie', model: 'path/to/smoothie.glb' },
+            { id: 'tea', model: 'path/to/tea.glb' },
+            { id: 'burger', model: 'path/to/burger.glb' },
+            { id: 'fries', model: 'path/to/fries.glb' },
+            { id: 'sandwich', model: 'path/to/sandwich.glb' },
+            { id: 'salad', model: 'path/to/salad.glb' },
+            { id: 'pizza', model: 'path/to/pizza.glb' }
+        ];
+
+        items.forEach(item => {
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(200, 200);
+            document.getElementById(item.id).appendChild(renderer.domElement);
+
+            const loader = new THREE.GLTFLoader();
+
+            loader.load(item.model, (gltf) => {
+                const model = gltf.scene;
+                scene.add(model);
+
+                // Adjust model position and scale if needed
+                model.position.set(0, 0, 0);
+                model.scale.set(1, 1, 1);
+
+                // Auto-adjust camera to fit the model
+                const box = new THREE.Box3().setFromObject(model);
+                const center = box.getCenter(new THREE.Vector3());
+                const size = box.getSize(new THREE.Vector3());
+
+                const maxDim = Math.max(size.x, size.y, size.z);
+                const fov = camera.fov * (Math.PI / 180);
+                let cameraZ = Math.abs(maxDim / 2 / Math.tan(fov / 2));
+
+                camera.position.z = cameraZ * 1.5; // Adjust multiplier as needed
+
+                // Add some light
+                const light = new THREE.AmbientLight(0xffffff, 1);
+                scene.add(light);
+
+                const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+                directionalLight.position.set(1, 1, 1).normalize();
+                scene.add(directionalLight);
+
+                function animate() {
+                    requestAnimationFrame(animate);
+                    model.rotation.y += 0.01;
+                    renderer.render(scene, camera);
+                }
+                animate();
+            });
+        });
+    </script>
+</body>
+</html>
