@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Fun Crossword Challenge</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Super Fun Crossword Challenge</h1>
+        <div id="menu" class="menu">
+            <button onclick="startGame('solo')">Play Solo</button>
+            <button onclick="startGame('multiplayer')">Play Multiplayer</button>
+            <button onclick="showLeaderboard()">Leaderboard</button>
+        </div>
+        <div id="game" class="game" style="display: none;">
+            <div class="game-info">
+                <div class="score">Score: <span id="score">0</span></div>
+                <div class="timer">Time: <span id="time">60</span>s</div>
+                <div class="difficulty">
+                    <select id="difficulty" onchange="setDifficulty()">
+                        <option value="easy">Easy</option>
+                        <option value="medium">Medium</option>
+                        <option value="hard">Hard</option>
+                    </select>
+                </div>
+            </div>
+            <div id="grid" class="grid"></div>
+            <div id="clue" class="clue"></div>
+            <button onclick="checkAnswer()">Submit</button>
+            <div id="computer-guess" class="computer-guess"></div>
+            <div id="random-question" class="random-question"></div>
+        </div>
+        <div id="leaderboard" class="leaderboard" style="display: none;">
+            <h2>Leaderboard</h2>
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Name</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboard-body"></tbody>
+            </table>
+            <button onclick="hideLeaderboard()">Back to Menu</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
