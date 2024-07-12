@@ -1,0 +1,11 @@
+Model Information:
+* title:	Fast-food
+* source:	https://sketchfab.com/3d-models/fast-food-f90b29bb27ad40319535c9909404189c
+* author:	nikitakorneev89 (https://sketchfab.com/nikitakorneev89)
+
+Model License:
+* license type:	CC-BY-NC-4.0 (http://creativecommons.org/licenses/by-nc/4.0/)
+* requirements:	Author must be credited. No commercial use.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Fast-food" (https://sketchfab.com/3d-models/fast-food-f90b29bb27ad40319535c9909404189c) by nikitakorneev89 (https://sketchfab.com/nikitakorneev89) licensed under CC-BY-NC-4.0 (http://creativecommons.org/licenses/by-nc/4.0/)

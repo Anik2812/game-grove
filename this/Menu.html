@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Catering 3D Menu</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@300;400&display=swap');
+
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #1a1c20 0%, #2b2e33 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+        }
+        #menu {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 40px;
+            max-width: 1200px;
+            width: 90%;
+        }
+        h1 {
+            font-family: 'Playfair Display', serif;
+            text-align: center;
+            color: #ffd700;
+            margin-bottom: 30px;
+            font-size: 3em;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .sections {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        .section {
+            width: 48%;
+            min-width: 300px;
+        }
+        h2 {
+            font-family: 'Playfair Display', serif;
+            text-align: center;
+            color: #ffd700;
+            border-bottom: 2px solid #ffd700;
+            padding-bottom: 10px;
+            font-size: 2em;
+        }
+        .model-container {
+            width: 100%;
+            height: 300px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .model-container:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+        .model-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 20px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        .model-container:hover .model-info {
+            transform: translateY(0);
+        }
+        .model-name {
+            margin: 0;
+            font-size: 1.4em;
+            color: #ffd700;
+        }
+        .model-description {
+            margin: 10px 0 0;
+            font-size: 1em;
+        }
+        .price {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ffd700;
+            color: #1a1c20;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        .add-to-cart {
+            background: #ffd700;
+            color: #1a1c20;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        .add-to-cart:hover {
+            background: #ffeb3b;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div id="menu">
+        <h1>Event Catering Menu</h1>
+        <div class="sections">
+            <div class="section">
+                <h2>Beverages</h2>
+                <div class="model-container" id="frappuccino">
+                    <div class="price">$5.99</div>
+                    <div class="model-info">
+                        <h3 class="model-name">Festive Frappuccino</h3>
+                        <p class="model-description">A celebratory blend of icy goodness and creamy indulgence.</p>
+                        <button class="add-to-cart">Add to Event</button>
+                    </div>
+                </div>
+                <div class="model-container" id="coffee">
+                    <div class="price">$3.99</div>
+                    <div class="model-info">
+                        <h3 class="model-name">Gala Gourmet Coffee</h3>
+                        <p class="model-description">Rich, aromatic, and perfectly brewed for sophisticated palates.</p>
+                        <button class="add-to-cart">Add to Event</button>
+                    </div>
+                </div>
+                <div class="model-container" id="cocktail">
+                    <div class="price">$8.99</div>
+                    <div class="model-info">
+                        <h3 class="model-name">Signature Event Cocktail</h3>
+                        <p class="model-description">A bespoke blend to elevate your special occasion.</p>
+                        <button class="add-to-cart">Add to Event</button>
+                    </div>
+                </div>
+            </div>
+            <div class="section">
+                <h2>Gourmet Delights</h2>
+                <div class="model-container" id="sandwich">
+                    <div class="price">$12.99</div>
+                    <div class="model-info">
+                        <h3 class="model-name">Elegant Canapés</h3>
+                        <p class="model-description">Exquisite bite-sized delights for sophisticated gatherings.</p>
+                        <button class="add-to-cart">Add to Event</button>
+                    </div>
+                </div>
+                <div class="model-container" id="desserts">
+                    <div class="price">$15.99</div>
+                    <div class="model-info">
+                        <h3 class="model-name">Deluxe Dessert Platter</h3>
+                        <p class="model-description">A heavenly assortment of sweet treats to cap off your event.</p>
+                        <button class="add-to-cart">Add to Event</button>
+                    </div>
+                </div>
+                <div class="model-container" id="cheese_board">
+                    <div class="price">$18.99</div>
+                    <div class="model-info">
+                        <h3 class="model-name">Artisanal Cheese Board</h3>
+                        <p class="model-description">A curated selection of fine cheeses and accompaniments.</p>
+                        <button class="add-to-cart">Add to Event</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script>
+        const items = [
+            { id: 'frappuccino', model: 'blt_sandwich.glb' },
+            { id: 'coffee', model: 'coffee.glb' },
+            { id: 'cocktail', model: 'cocktail.glb' },
+            { id: 'sandwich', model: 'sandwich.glb' },
+            { id: 'desserts', model: 'desserts.glb' },
+            { id: 'cheese_board', model: 'cheese_board.glb' }
+        ];
+
+        items.forEach(item => {
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(300, 300);
+            document.getElementById(item.id).appendChild(renderer.domElement);
+
+            const loader = new THREE.GLTFLoader();
+
+            loader.load(item.model, (gltf) => {
+                const model = gltf.scene;
+                scene.add(model);
+
+                // Adjust model position and scale
+                model.position.set(0, 0, 0);
+                model.scale.set(1, 1, 1);
+
+                // Auto-adjust camera
+                const box = new THREE.Box3().setFromObject(model);
+                const center = box.getCenter(new THREE.Vector3());
+                const size = box.getSize(new THREE.Vector3());
+
+                const maxDim = Math.max(size.x, size.y, size.z);
+                const fov = camera.fov * (Math.PI / 180);
+                let cameraZ = Math.abs(maxDim / 4 * Math.tan(fov * 2));
+
+                camera.position.z = cameraZ;
+
+                const minZ = box.min.z;
+                const cameraToFarEdge = minZ < 0 ? -minZ + cameraZ : cameraZ;
+
+                camera.far = cameraToFarEdge * 3;
+                camera.updateProjectionMatrix();
+
+                const animate = function () {
+                    requestAnimationFrame(animate);
+                    model.rotation.y += 0.01; // Rotate the model
+                    renderer.render(scene, camera);
+                };
+                animate();
+            }, undefined, (error) => {
+                console.error(error);
+            });
+
+            window.addEventListener('resize', () => {
+                const container = document.getElementById(item.id);
+                const width = container.offsetWidth;
+                const height = container.offsetHeight;
+                renderer.setSize(width, height);
+                camera.aspect = width / height;
+                camera.updateProjectionMatrix();
+            });
+        });
+    </script>
+</body>
+</html>
